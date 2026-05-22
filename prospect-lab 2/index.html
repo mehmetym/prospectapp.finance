@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prospect Lab — Petrol Bazlı Ürün Zekâsı</title>
+<meta name="description" content="Prospect Lab: Brent fiyatı, küresel haber sentiment'i ve sektörel korelasyon — tek motorda aksiyon-odaklı uyarı sistemi." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0d0c;
+    --bg-2:#0f1311;
+    --ink:#e8e6df;
+    --ink-dim:#8a8a82;
+    --accent:#c8ff3e;
+    --accent-dim:#5a6b1f;
+    --warn:#ff5c39;
+    --serif:'Fraunces',Georgia,serif;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --border:rgba(232,230,223,0.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--ink);font-family:var(--mono);overflow-x:hidden}
+  body{
+    background-image:
+      radial-gradient(circle at 20% 0%,rgba(200,255,62,0.06),transparent 40%),
+      radial-gradient(circle at 90% 80%,rgba(255,92,57,0.04),transparent 45%);
+    background-attachment:fixed;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:1;opacity:0.4;
+    background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.08 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  .scan{
+    position:fixed;left:0;right:0;top:0;height:100vh;pointer-events:none;z-index:2;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,0.015) 0,rgba(255,255,255,0.015) 1px,transparent 1px,transparent 3px);
+  }
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:50;
+    display:flex;justify-content:space-between;align-items:center;
+    padding:1.25rem 2.5rem;
+    border-bottom:1px solid var(--border);
+    background:rgba(10,13,12,0.7);backdrop-filter:blur(12px);
+  }
+  .logo{font-family:var(--serif);font-weight:600;font-size:1.4rem;letter-spacing:-0.02em}
+  .logo span{color:var(--accent)}
+  .nav-meta{font-size:.75rem;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.15em}
+  .nav-meta .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:.5rem;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+  .hero{
+    min-height:100vh;padding:8rem 2.5rem 4rem;
+    display:grid;grid-template-columns:1.4fr 1fr;gap:4rem;align-items:center;
+    position:relative;
+  }
+  .hero-text .eyebrow{
+    font-size:.75rem;letter-spacing:.3em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:2rem;
+    opacity:0;animation:rise .8s .1s forwards;
+  }
+  .hero-text h1{
+    font-family:var(--serif);font-weight:300;font-size:clamp(3rem,7vw,6.5rem);
+    line-height:.95;letter-spacing:-0.03em;margin-bottom:2rem;
+    opacity:0;animation:rise 1s .3s forwards;
+  }
+  .hero-text h1 em{font-style:italic;color:var(--accent);font-weight:400}
+  .hero-text h1 .strike{text-decoration:line-through;text-decoration-thickness:1px;color:var(--ink-dim)}
+  .hero-text p{
+    font-size:1.05rem;color:var(--ink-dim);max-width:540px;line-height:1.65;
+    margin-bottom:2.5rem;
+    opacity:0;animation:rise 1s .5s forwards;
+  }
+  .hero-cta{display:flex;gap:1rem;flex-wrap:wrap;opacity:0;animation:rise 1s .7s forwards}
+  .btn{
+    padding:.9rem 1.6rem;border:1px solid var(--border);background:transparent;color:var(--ink);
+    font-family:var(--mono);font-size:.85rem;letter-spacing:.05em;text-transform:uppercase;
+    cursor:pointer;transition:all .25s;text-decoration:none;display:inline-flex;align-items:center;gap:.7rem;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#0a0d0c;border-color:var(--accent)}
+  .btn.primary:hover{background:transparent;color:var(--accent)}
+  @keyframes rise{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+  .panel{
+    border:1px solid var(--border);background:var(--bg-2);
+    font-family:var(--mono);font-size:.8rem;
+    opacity:0;animation:rise 1s .9s forwards;
+    box-shadow:0 30px 80px rgba(0,0,0,.5);
+  }
+  .panel-head{
+    padding:.6rem 1rem;border-bottom:1px solid var(--border);
+    display:flex;justify-content:space-between;align-items:center;color:var(--ink-dim);font-size:.7rem;letter-spacing:.1em;
+  }
+  .panel-body{padding:1.2rem 1.4rem;line-height:1.8}
+  .panel-row{display:flex;justify-content:space-between;padding:.3rem 0;border-bottom:1px dashed rgba(232,230,223,0.06)}
+  .panel-row:last-child{border:none}
+  .panel-row .k{color:var(--ink-dim)}
+  .panel-row .v{color:var(--ink)}
+  .panel-row .v.up{color:var(--accent)}
+  .panel-row .v.dn{color:var(--warn)}
+  .blink{display:inline-block;width:8px;height:14px;background:var(--accent);margin-left:4px;animation:blink 1s infinite;vertical-align:middle}
+  @keyframes blink{50%{opacity:0}}
+
+  section{padding:6rem 2.5rem;border-top:1px solid var(--border);position:relative}
+  .section-num{
+    position:absolute;top:6rem;right:2.5rem;font-family:var(--serif);font-style:italic;
+    color:var(--ink-dim);font-size:.85rem;letter-spacing:.1em;
+  }
+  h2{
+    font-family:var(--serif);font-weight:300;font-size:clamp(2rem,4.5vw,3.5rem);
+    line-height:1;letter-spacing:-0.02em;margin-bottom:3rem;max-width:900px;
+  }
+  h2 em{font-style:italic;color:var(--accent)}
+
+  .problem-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-top:1px solid var(--border)}
+  .p-card{padding:2.2rem 1.8rem;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .p-card:last-child{border-right:none}
+  .p-card .stat{font-family:var(--serif);font-size:3rem;font-weight:300;color:var(--accent);line-height:1;margin-bottom:.8rem}
+  .p-card .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.18em;color:var(--ink-dim);margin-bottom:1rem}
+  .p-card .desc{font-size:.9rem;line-height:1.55;color:var(--ink)}
+
+  .modules{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:2rem}
+  .module{
+    border:1px solid var(--border);padding:2rem 1.6rem;background:var(--bg-2);
+    transition:transform .3s,border-color .3s;position:relative;overflow:hidden;
+  }
+  .module:hover{transform:translateY(-4px);border-color:var(--accent)}
+  .module::before{
+    content:attr(data-num);position:absolute;top:.6rem;right:1rem;
+    font-family:var(--serif);font-style:italic;color:var(--accent-dim);font-size:.85rem;
+  }
+  .module h3{font-family:var(--serif);font-weight:400;font-size:1.5rem;margin-bottom:1rem;letter-spacing:-0.01em}
+  .module p{font-size:.85rem;color:var(--ink-dim);line-height:1.6;margin-bottom:1.2rem}
+  .module .tags{display:flex;flex-wrap:wrap;gap:.4rem}
+  .tag{font-size:.65rem;padding:.25rem .55rem;border:1px solid var(--border);color:var(--ink-dim);text-transform:uppercase;letter-spacing:.1em}
+
+  .demo{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+  .demo-side h3{font-family:var(--serif);font-weight:400;font-size:1.8rem;margin-bottom:1.2rem}
+  .demo-side p{color:var(--ink-dim);line-height:1.65;font-size:.95rem;margin-bottom:1rem}
+  .demo-side ul{list-style:none;margin-top:1.5rem}
+  .demo-side li{padding:.6rem 0;border-bottom:1px dashed var(--border);font-size:.85rem;display:flex;justify-content:space-between}
+  .demo-side li .arrow{color:var(--accent)}
+
+  .alert-card{
+    border:1px solid var(--border);background:var(--bg-2);padding:1.4rem;margin-bottom:1rem;
+    border-left:3px solid var(--accent);
+  }
+  .alert-card.warn{border-left-color:var(--warn)}
+  .alert-card.neutral{border-left-color:var(--ink-dim)}
+  .alert-card h4{font-family:var(--mono);font-size:.75rem;text-transform:uppercase;letter-spacing:.15em;margin-bottom:.6rem;color:var(--ink-dim)}
+  .alert-card .product{font-family:var(--serif);font-size:1.3rem;font-weight:400;margin-bottom:.8rem}
+  .alert-card .alert-text{font-size:.85rem;line-height:1.55;color:var(--ink)}
+  .alert-card .alert-text b{color:var(--accent)}
+  .alert-card.warn .alert-text b{color:var(--warn)}
+
+  .roadmap{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border)}
+  .rm-row{display:contents}
+  .rm-row > div{padding:1.4rem 1.6rem;border-bottom:1px solid var(--border)}
+  .rm-row:last-child > div{border-bottom:none}
+  .rm-row > div:first-child{border-right:1px solid var(--border);font-family:var(--serif);font-style:italic;color:var(--ink)}
+  .rm-row > div:last-child{color:var(--ink-dim);font-size:.85rem}
+  .rm-row.done > div:last-child::before{content:"● ";color:var(--accent)}
+  .rm-row.wip > div:last-child::before{content:"◐ ";color:var(--accent)}
+  .rm-row.todo > div:last-child::before{content:"○ ";color:var(--ink-dim)}
+
+  footer{padding:4rem 2.5rem;border-top:1px solid var(--border);text-align:center}
+  footer .big{font-family:var(--serif);font-size:clamp(2rem,5vw,4rem);font-weight:300;letter-spacing:-0.02em;margin-bottom:1.5rem}
+  footer .big em{font-style:italic;color:var(--accent)}
+  footer .meta{font-size:.7rem;color:var(--ink-dim);letter-spacing:.2em;text-transform:uppercase;margin-top:3rem}
+  footer a{color:var(--accent);text-decoration:none}
+
+  @media (max-width: 900px){
+    .hero{grid-template-columns:1fr;gap:3rem;padding-top:6rem}
+    .problem-grid,.modules,.demo{grid-template-columns:1fr}
+    .p-card{border-right:none}
+    nav{padding:1rem 1.5rem}
+    section{padding:4rem 1.5rem}
+    .section-num{right:1.5rem}
+  }
+</style>
+</head>
+<body>
+<div class="scan"></div>
+
+<nav>
+  <div class="logo">Prospect<span>.</span>Lab</div>
+  <div class="nav-meta"><span class="dot"></span>prospectapp.finance — LIVE</div>
+</nav>
+
+<header class="hero">
+  <div class="hero-text">
+    <div class="eyebrow">— BTK Hackathon '26 / MVP</div>
+    <h1>
+      Her şey <em>petrole</em><br/>
+      bağlı. Artık<br/>
+      <span class="strike">tahmin</span> değil, <em>uyarı.</em>
+    </h1>
+    <p>
+      Prospect Lab; Brent fiyatını, küresel haber akışını ve sektörel korelasyonları tek bir motorda birleştirir. Kullanıcının takip listesindeki ürünler için 7 günlük yön tahmini ve aksiyona dönük uyarı üretir.
+    </p>
+    <div class="hero-cta">
+      <a class="btn primary" href="#modules">Sistemi Gör →</a>
+      <a class="btn" href="#demo">Canlı Mock-up</a>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head"><span>// brent.live</span><span>prospectapp.finance</span></div>
+    <div class="panel-body">
+      <div class="panel-row"><span class="k">spot_price</span><span class="v">$<span id="spot">82.41</span>/bbl</span></div>
+      <div class="panel-row"><span class="k">7d_forecast</span><span class="v up">$84.18 ▲ +2.15%</span></div>
+      <div class="panel-row"><span class="k">news_sentiment</span><span class="v up">+0.38 / pos</span></div>
+      <div class="panel-row"><span class="k">tracked_products</span><span class="v">4</span></div>
+      <div class="panel-row"><span class="k">active_alerts</span><span class="v warn">2 ▲ high</span></div>
+      <div class="panel-row"><span class="k">last_signal</span><span class="v">benzin — al sinyali<span class="blink"></span></span></div>
+    </div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="section-num">/ 01 problem</div>
+  <h2>Tüketici, <em>nedeni</em> görmeden zamlanır.</h2>
+  <div class="problem-grid">
+    <div class="p-card">
+      <div class="lbl">Maliyet zinciri</div>
+      <div class="stat">68%</div>
+      <div class="desc">Türkiye'de imalat ve lojistik maliyetlerinin doğrudan/dolaylı enerji-petrol bağı.</div>
+    </div>
+    <div class="p-card">
+      <div class="lbl">Bilgi gecikmesi</div>
+      <div class="stat">3-5</div>
+      <div class="desc">Brent'teki yön değişikliğinin raftaki fiyata yansıması: ortalama hafta cinsinden.</div>
+    </div>
+    <div class="p-card">
+      <div class="lbl">Tüketici tarafı</div>
+      <div class="stat">0</div>
+      <div class="desc">Mevcut araçlar yatırımcıyı hedefler. Son tüketici için aksiyon-odaklı bir uyarı katmanı yok.</div>
+    </div>
+  </div>
+</section>
+
+<section id="modules">
+  <div class="section-num">/ 02 mimari</div>
+  <h2>Üç motor, <em>tek</em> sinyal.</h2>
+  <div class="modules">
+    <div class="module" data-num="i.">
+      <h3>Brent İzleme & Tahmin</h3>
+      <p>Yahoo Finance üzerinden anlık Brent verisi. 7 günlük yön tahmini; trend, mean-reversion ve haber sentiment'inin ağırlıklı kombinasyonu.</p>
+      <div class="tags"><span class="tag">Python</span><span class="tag">yfinance</span><span class="tag">v0.1</span></div>
+    </div>
+    <div class="module" data-num="ii.">
+      <h3>Haber Sentiment Motoru</h3>
+      <p>OPEC, jeopolitik ve stok haberlerini tarar; her başlığı sentiment skoruna çevirip tahmin modeline feature olarak besler.</p>
+      <div class="tags"><span class="tag">Kural-tabanlı</span><span class="tag">→ BERT-tr</span><span class="tag">MVP</span></div>
+    </div>
+    <div class="module" data-num="iii.">
+      <h3>Ürün-Petrol Korelasyon Motoru</h3>
+      <p>Sektörel korelasyon katsayıları üzerinden ürün-bazında beklenen hareketi hesaplar ve aksiyon uyarısına çevirir.</p>
+      <div class="tags"><span class="tag">17 sektör</span><span class="tag">Statik korelasyon</span><span class="tag">v0.1</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="demo">
+  <div class="section-num">/ 03 canlı mock-up</div>
+  <h2>Uyarılar nasıl <em>görünür?</em></h2>
+  <div class="demo">
+    <div class="demo-side">
+      <h3>Tracker örnek senaryo</h3>
+      <p>Kullanıcı kendi takip listesini oluşturur; sistem her ürün için petrol-korelasyon katsayısı ve 7-günlük tahmin doğrultusunda uyarı üretir.</p>
+      <ul>
+        <li><span>Brent spot</span><span class="arrow">$82.41</span></li>
+        <li><span>7-gün tahmin</span><span class="arrow">$84.18 (+2.15%)</span></li>
+        <li><span>Haber sentiment</span><span class="arrow">+0.38</span></li>
+        <li><span>Takipli ürün</span><span class="arrow">4</span></li>
+      </ul>
+    </div>
+    <div class="demo-side">
+      <div class="alert-card warn">
+        <h4>// yüksek alarm</h4>
+        <div class="product">Benzin</div>
+        <div class="alert-text">Korelasyon <b>+0.92</b>. Petrolün +2.15% hareketiyle bu ürün ~<b>+1.98%</b> yükselebilir. <b>Stoklamayı veya erken alımı değerlendirin.</b></div>
+      </div>
+      <div class="alert-card warn">
+        <h4>// yüksek alarm</h4>
+        <div class="product">Lojistik / Kargo</div>
+        <div class="alert-text">Korelasyon <b>+0.62</b>. Beklenen hareket ~<b>+1.33%</b>. Toplu sevkiyatlarınızı <b>bu hafta içinde</b> planlayın.</div>
+      </div>
+      <div class="alert-card">
+        <h4>// fırsat</h4>
+        <div class="product">Havayolu</div>
+        <div class="alert-text">Korelasyon <b>−0.55</b>. Brent yükselse de bilet talebi açısından kısa vade nötr; <b>acil alım gerekmiyor</b>.</div>
+      </div>
+      <div class="alert-card neutral">
+        <h4>// nötr</h4>
+        <div class="product">Elektrikli Araç</div>
+        <div class="alert-text">Korelasyon <b>−0.48</b>. Beklenen hareket önemsiz. <b>Takipte kalın.</b></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="section-num">/ 04 yol haritası</div>
+  <h2>Bugün <em>MVP.</em><br/>Yarın ürün.</h2>
+  <div class="roadmap">
+    <div class="rm-row done"><div>Brent canlı veri</div><div>Yahoo Finance entegrasyonu, 90 gün histori, haftalık delta</div></div>
+    <div class="rm-row done"><div>Ürün korelasyon motoru</div><div>17 sektör için statik katsayılar, uyarı şablonları</div></div>
+    <div class="rm-row done"><div>Streamlit MVP arayüzü</div><div>Watchlist + tahmin + uyarı paneli</div></div>
+    <div class="rm-row wip"><div>Haber sentiment</div><div>Kural-tabanlıdan Türkçe BERT'e geçiş — sonraki sürüm</div></div>
+    <div class="rm-row todo"><div>LSTM / Prophet</div><div>Multivariate, haber + makro değişkenli zaman serisi modeli</div></div>
+    <div class="rm-row todo"><div>Push & e-posta uyarı</div><div>Eşik aşıldığında otomatik bildirim katmanı</div></div>
+    <div class="rm-row todo"><div>Dinamik korelasyon</div><div>Gerçek ürün fiyatlarıyla canlı regresyon — statikten dinamiğe</div></div>
+  </div>
+</section>
+
+<footer>
+  <div class="big">Prospect <em>Lab</em></div>
+  <div style="color:var(--ink-dim);max-width:600px;margin:0 auto;font-size:.9rem;line-height:1.6">
+    BTK Hackathon 2026 başvurusu. MVP — ilk 10'a kalınması durumunda canlı sunumda her modülün teknik derinliği ve roadmap detayı ele alınacaktır.
+  </div>
+  <div style="margin-top:2rem;font-size:.85rem;color:var(--ink-dim)">
+    🌐 <a href="https://prospectapp.finance">prospectapp.finance</a>
+  </div>
+  <div class="meta">22.05.2026 — Türkiye — Made for BTK Akademi × Google × GİRVAK</div>
+</footer>
+
+<script>
+  const spot = document.getElementById('spot');
+  let p = 82.41;
+  setInterval(()=>{
+    p += (Math.random()-0.5)*0.08;
+    spot.textContent = p.toFixed(2);
+  }, 1400);
+</script>
+</body>
+</html>
