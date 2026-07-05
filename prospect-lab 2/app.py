@@ -2,7 +2,7 @@
 Prospect Lab — Streamlit Dashboard
 Petrol Bazlı Ürün Takip, Tahmin ve Uyarı Sistemi
 BTK Hackathon 2026 — MVP
-
+ 
 Çalıştırma: streamlit run app.py
 Web: https://prospectapp.finance
 """
