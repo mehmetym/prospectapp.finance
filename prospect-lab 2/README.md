@@ -14,7 +14,7 @@
 
 🌐 **Web:** [prospectapp.finance](https://prospectapp.finance)  ·  📊 **Demo:** Streamlit Dashboard  ·  📺 **Video:** Project Walkthrough
 
-</div>
+</div> 
 
 ---
 
