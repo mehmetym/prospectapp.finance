@@ -13,7 +13,7 @@
 [![Hackathon](https://img.shields.io/badge/BTK-Hackathon%202026-orange?style=flat-square)]()
 
 🌐 **Web:** [prospectapp.finance](https://prospectapp.finance)  ·  📊 **Demo:** Streamlit Dashboard  ·  📺 **Video:** Project Walkthrough
-
+ 
 </div> 
 
 ---
