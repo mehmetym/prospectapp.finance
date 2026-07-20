@@ -10,7 +10,7 @@ MVP yaklaşımı:
   - 17 sektör için statik korelasyon haritası (literatür + sezgisel)
   - Eşik tabanlı uyarı kategorileri
 
-Roadmap:
+Roadmap: 
   - TÜİK + TCMB verisi ile dinamik regresyon (v0.4)
   - Kullanıcı bazlı eşik özelleştirme (v0.5)
 """
