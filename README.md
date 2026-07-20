@@ -3,7 +3,7 @@
 <div align="center">
 
 # ◣ PROSPECT LAB
-
+ 
 **Petrol bazlı ürün zekâsı: takip, tahmin ve aksiyon-odaklı uyarı motoru**
   
 *BTK Hackathon 2026 — Resmi başvuru deposu* 
