@@ -12,7 +12,7 @@ Tasarım felsefesi:
   - Yön > kesin sayı
   - Sentiment olmadan teknik analiz eksiktir
  
-Roadmap:
+Roadmap: 
   - Facebook Prophet (v0.2)
   - PyTorch LSTM + attention (v0.3)
   - Ensemble blending (v0.4)
