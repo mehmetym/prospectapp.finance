@@ -1,5 +1,5 @@
 # Prospect Lab — Yol Haritası
-
+ 
 Bu belge, Prospect Lab'in uzun vadeli geliştirme planını ve her sürümün hedeflerini detaylandırır.
 
 ## Vizyon
