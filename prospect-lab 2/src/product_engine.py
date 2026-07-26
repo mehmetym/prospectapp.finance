@@ -1,4 +1,4 @@
-"""
+ """
 Prospect Lab — Ürün-Petrol Korelasyon Motoru
 
 Kullanıcının takip listesindeki her ürün için:
