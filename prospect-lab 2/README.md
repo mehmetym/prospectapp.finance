@@ -1,6 +1,6 @@
 <div align="center">
 
-# ◣ PROSPECT LAB 
+# ◣ PROSPECT LAB  
 
 **Petrol bazlı ürün zekâsı: takip, tahmin ve aksiyon-odaklı uyarı motoru**
 
