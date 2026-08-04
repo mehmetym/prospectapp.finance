@@ -8,7 +8,7 @@ Web: https://prospectapp.finance
 """
 import streamlit as st  
 import pandas as pd
-import numpy as np 
+import numpy as np  
 from datetime import datetime
 import yfinance as yf
 
