@@ -9,7 +9,7 @@ Web: https://prospectapp.finance
 import streamlit as st  
 import pandas as pd
 import numpy as np  
-from datetime import datetime
+from datetime import datetime 
 import yfinance as yf
 
 from src.news_analyzer import analyze_news_sentiment
