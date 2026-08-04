@@ -5,7 +5,7 @@ BTK Hackathon 2026 — MVP
  
 Çalıştırma: streamlit run app.py
 Web: https://prospectapp.finance
-"""
+""" 
 import streamlit as st  
 import pandas as pd
 import numpy as np  
