@@ -2,7 +2,7 @@
  
 Bu belge, Prospect Lab'in uzun vadeli geliştirme planını ve her sürümün hedeflerini detaylandırır.
 
-## Vizyon
+## Vizyon 
 
 > Her son tüketicinin, küresel petrol fiyatına bağlı olduğunu bilmediği ürünleri **kendi diliyle, kendi listesi üzerinden** takip edebildiği, **gerçek bir aksiyon vereni** olduğu bir araç.
 
