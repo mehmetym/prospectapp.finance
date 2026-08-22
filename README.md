@@ -1,6 +1,6 @@
   # prospectapp.finance
 
-<div align="center">  
+<div align="center">   
 
 # ◣ PROSPECT LAB
  
