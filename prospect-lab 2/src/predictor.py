@@ -1,6 +1,6 @@
 """
 Prospect Lab — Brent Petrol Tahmin Modülü
-
+ 
 7-günlük yön tahmini üretir. Tahmin formülü üç bileşenden oluşur:
 
   1. Trend etkisi      (haftalık değişimi yumuşatılmış sürdür)
