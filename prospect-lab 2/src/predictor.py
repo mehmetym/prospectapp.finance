@@ -6,7 +6,7 @@ Prospect Lab — Brent Petrol Tahmin Modülü
   1. Trend etkisi      (haftalık değişimi yumuşatılmış sürdür)
   2. Sentiment etkisi  (haber sentiment'inden gelen yön baskısı)
   3. Mean-reversion    (ortalamaya dönüş eğilimi)
-
+ 
 Tasarım felsefesi:
   - Açıklanabilirlik > karmaşıklık
   - Yön > kesin sayı
