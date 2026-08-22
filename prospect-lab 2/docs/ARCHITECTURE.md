@@ -7,7 +7,7 @@ Bu belge, Prospect Lab'in v0.1 MVP mimarisinin teknik detaylarını ve roadmap �
 Prospect Lab modüler bir Python uygulamasıdır. Her motor (predictor, news_analyzer, product_engine) bağımsız olarak çalışır, test edilir ve geliştirilir. UI katmanı Streamlit ile sağlanır; landing sayfası statik HTML olarak [prospectapp.finance](https://prospectapp.finance) adresinde yayınlanır.
 
 ## 2. Veri Akışı
-
+ 
 ```
 [Yahoo Finance API]
         │
